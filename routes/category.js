@@ -2,32 +2,28 @@ const express = require('express');
 const router = express.Router();
 const objectId = require('mongoose').Types.ObjectId;
 
-const MangaModel = require('../Models/mangaModel');
+const CategoryModel = require('../Models/categoryModel');
 
 router.get('/', (req, res) => {
-    MangaModel.find((err, docs) => {
+    CategoryModel.find((err, docs) => {
         if(!err) res.send(docs);
         else console.log("Error to get data : " + err);
     })
 });
 
 router.get('/:id', (req, res) => {
-    MangaModel.findById(req.params.id).populate('categoryId').then((data, err) => {
-        if(!err) res.send(data);
+    CategoryModel.findById(req.params.id, (err, docs) => {
+        if(!err) res.send(docs);
         else console.log("Error to get data : " + err);
     })
 });
 
 router.post('/', (req, res) => {
-    const newManga = new MangaModel({
-        title: req.body.title,
-        year: req.body.year,
-        price: req.body.price,
-        imgUrl: req.body.imgUrl,
-        categoryId: req.body.categoryId
+    const newCategory = new CategoryModel({
+        name: req.body.name
     });
 
-    newManga.save((err, docs) => {
+    newCategory.save((err, docs) => {
         if(!err) res.send(docs);
         else console.log('Error creating new data : ' + err);
     })
@@ -38,13 +34,10 @@ router.put('/:id', (req, res) => {
         return res.status(400).send("ID unknow ! " + req.params.id)
 
     const updateItem = {
-        title: req.body.title,
-        year: req.body.year,
-        price: req.body.price,
-        imgUrl: req.body.imgUrl
+        name: req.body.name
     };
 
-    MangaModel.findByIdAndUpdate(
+    CategoryModel.findByIdAndUpdate(
         req.params.id,
         { $set: updateItem },
         { new: true },
@@ -59,7 +52,7 @@ router.delete('/:id', (req, res) => {
     if(!objectId.isValid(req.params.id))
         return res.status(400).send("ID unknow ! " + req.params.id)
 
-        MangaModel.findByIdAndRemove(
+        CategoryModel.findByIdAndRemove(
         req.params.id,
         (err, docs) => {
             if(!err) res.send(docs);

@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
+const Category = require('./categoryModel');
 
-const MangaModel = mongoose.model(
-    "manga-api",
+const MangaModel = mongoose.Schema(
     {
         title: {
             type: String,
@@ -18,9 +18,15 @@ const MangaModel = mongoose.model(
         imgUrl: {
             type: String,
             required: true
-        }
+        },
+        categoryId: [{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "category-api",
+            required: false,
+            autopopulate: true,
+        }]
     },
-    "manga"
 );
 
-module.exports = { MangaModel };
+MangaModel.plugin(require('mongoose-autopopulate'));
+module.exports = manga = mongoose.model('manga-api', MangaModel);
